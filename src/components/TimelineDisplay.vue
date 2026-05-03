@@ -2,10 +2,10 @@
   <div class="main-display">
     <div v-for="item in store.sortedItems" :key="item.id" class="item-wrapper">
       <div v-if="item.type === 'section'" class="section-node" @click="store.setEditing(item.id)">
-        <span class="section-label">{{ item.date }}</span>
+        <span class="section-label">{{ item.date_str }}</span>
       </div>
       <div v-else class="post-node" @click="store.setEditing(item.id)">
-        <div class="date-col">{{ item.date }}</div>
+        <div class="date-col">{{ item.date_str }}</div>
         <div class="axis-col">
           <div class="dot"></div>
           <div class="line"></div>
@@ -22,7 +22,12 @@
 
 <script setup lang="ts">
 import { useTimelineStore } from '../store/useTimeline';
+import { onMounted } from 'vue';
 const store = useTimelineStore();
+
+onMounted(() => {
+  store.fetchItems(); // 页面一打开，就去 Supabase 取回所有历史记录
+});
 </script>
 
 <style scoped>
