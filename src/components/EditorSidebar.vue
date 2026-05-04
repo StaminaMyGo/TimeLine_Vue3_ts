@@ -41,6 +41,7 @@
     <div class="actions">
       <button @click="handleSave" class="btn-save">{{ isEditing ? '保存修改' : '立即发布' }}</button>
       <button v-if="isEditing" @click="cancel" class="btn-cancel">取消编辑</button>
+      <button v-if="isEditing" @click="handleDelete" class="btn-delete">删除记录</button>
     </div>
   </div>
 </template>
@@ -102,6 +103,12 @@ const handleSave = async () => {
 };
 
 const cancel = () => store.setEditing(null);
+
+const handleDelete = async () => {
+  if (store.editingId && confirm('确定要删除这条记录吗？')) {
+    await store.deleteItem(store.editingId);
+  }
+};
 const resetForm = () => {
   form.value = { type: 'post' as TimelineType, date: formatFullDate(), content: '' };
 };
@@ -122,6 +129,8 @@ watch(() => store.currentEditingItem, (newVal) => {
 input, textarea, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
 .btn-save { background: #8576b9; color: white; border: none; padding: 10px; width: 100%; cursor: pointer; border-radius: 4px; }
 .btn-cancel { margin-top: 10px; width: 100%; border: none; background: transparent; cursor: pointer; color: #666; font-size: 13px; }
+.btn-delete { margin-top: 10px; width: 100%; border: 1px solid #e74c3c; background: transparent; cursor: pointer; color: #e74c3c; font-size: 13px; padding: 8px; border-radius: 4px; }
+.btn-delete:hover { background: #e74c3c; color: white; }
 
 /* 登录区域样式 */
 .auth-section { margin-bottom: 15px; }

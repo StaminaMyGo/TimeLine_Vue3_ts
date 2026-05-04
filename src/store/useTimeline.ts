@@ -26,8 +26,17 @@ const editingId = ref<number | null>(null);
       .from('timeline_items')
       .select('*')
       .order('created_at', { ascending: false }); // 按时间倒序排序
-    
-    if (!error) items.value = data;
+
+    console.log('[fetchItems] data:', data, 'error:', error);
+
+    if (error) {
+      console.error('[fetchItems] 查询失败:', error.message);
+    } else {
+      items.value = data || [];
+      if ((data || []).length === 0) {
+        console.warn('[fetchItems] 返回空数组，请检查 Supabase RLS 策略是否允许当前用户 SELECT');
+      }
+    }
     loading.value = false;
   };
 
@@ -57,9 +66,23 @@ const editingId = ref<number | null>(null);
         type: updates.type
       })
       .eq('id', id);
-    
+
     if (!error) await fetchItems(); // 重新刷新列表
   };
+
+  // 4. 删除云端记录
+  const deleteItem = async (id: number) => {
+    const { error } = await supabase
+      .from('timeline_items')
+      .delete()
+      .eq('id', id);
+
+    if (!error) {
+      items.value = items.value.filter(item => item.id !== id);
+      editingId.value = null;
+    }
+  };
+
   const setEditing = (id: number | null) => { editingId.value = id; };
 
   return { 
@@ -69,7 +92,8 @@ const editingId = ref<number | null>(null);
     sortedItems, // 确保这一行存在
     fetchItems, 
     addItem, 
-    updateItem, 
+    updateItem,
+    deleteItem,
     currentEditingItem,
     setEditing 
   };

@@ -1,5 +1,7 @@
 <template>
   <div class="main-display">
+    <div v-if="store.loading" class="status-text">加载中...</div>
+    <div v-else-if="store.items.length === 0" class="status-text">暂无记录，请检查控制台日志或 Supabase RLS 策略</div>
     <div v-for="item in store.sortedItems" :key="item.id" class="item-wrapper">
       <div v-if="item.type === 'section'" class="section-node" @click="store.setEditing(item.id)">
         <span class="section-label">{{ item.date_str }}</span>
@@ -42,4 +44,5 @@ onMounted(() => {
 .content-col { flex: 1; padding-left: 20px; padding-bottom: 25px; }
 .bubble { background: #fff; padding: 12px 18px; border-radius: 6px; display: inline-block; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: 0.2s; border: 2px solid transparent; }
 .bubble.active { border-color: #8576b9; transform: translateX(5px); }
+.status-text { text-align: center; color: #999; padding: 40px; font-size: 14px; }
 </style>
