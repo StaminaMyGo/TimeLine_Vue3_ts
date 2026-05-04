@@ -42,12 +42,16 @@ const editingId = ref<number | null>(null);
 
   // 2. 新增记录到云端
   const addItem = async (newItem: any) => {
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData.user?.id;
+
     const { data, error } = await supabase
       .from('timeline_items')
       .insert([{ 
         date_str: newItem.date, 
         content: newItem.content, 
-        type: newItem.type 
+        type: newItem.type,
+        user_id: userId
       }])
       .select();
     
