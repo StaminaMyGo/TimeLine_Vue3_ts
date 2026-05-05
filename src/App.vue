@@ -8,6 +8,7 @@
       <TimelineDisplay :active-line="currentLine" />
     </template>
   </Side2Main>
+  <AuthModal />
 </template>
 
 <script setup lang="ts">
@@ -16,6 +17,7 @@ import Side2Main from './layout/side2main.vue';
 import EditorSidebar from './components/EditorSidebar.vue';
 import TimelineDisplay from './components/TimelineDisplay.vue';
 import BlogHome from './pages/BlogHome.vue';
+import AuthModal from './components/AuthModal.vue';
 
 type AppRoute = 'engineering' | 'exam' | 'blog';
 
