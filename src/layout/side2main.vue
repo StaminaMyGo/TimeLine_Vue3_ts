@@ -27,4 +27,10 @@
   flex-grow: 1;
   position: relative;
 }
+
+@media (max-width: 768px) {
+  .layout-sidebar {
+    display: none;
+  }
+}
 </style>

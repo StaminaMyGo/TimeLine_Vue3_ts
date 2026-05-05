@@ -202,4 +202,29 @@ watch(
     margin-left: 0;
   }
 }
+
+@media (max-width: 768px) {
+  .main-display {
+    padding: 20px 16px;
+  }
+
+  .bubble {
+    padding: 14px 18px;
+    font-size: 15px;
+  }
+
+  .date-col {
+    font-size: 12px;
+  }
+
+  .section-label {
+    padding: 0 12px;
+    font-size: 11px;
+  }
+
+  .status-text {
+    padding: 24px;
+    font-size: 14px;
+  }
+}
 </style>
