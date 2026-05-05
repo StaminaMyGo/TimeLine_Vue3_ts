@@ -1,7 +1,7 @@
 <template>
   <div class="main-display">
     <div v-if="store.loading" class="status-text">加载中...</div>
-    <div v-else-if="store.items.length === 0" class="status-text">暂无记录，请检查控制台日志或 Supabase RLS 策略</div>
+    <div v-else-if="store.items.length === 0" class="status-text">{{ emptyText }}</div>
     <div v-for="item in store.sortedItems" :key="item.id" class="item-wrapper">
       <div v-if="item.type === 'section'" class="section-node" @click="store.setEditing(item.id)">
         <span class="section-label">{{ item.date_str }}</span>
@@ -13,7 +13,7 @@
           <div class="line"></div>
         </div>
         <div class="content-col">
-          <div class="bubble" :class="{ 'active': store.editingId === item.id }">
+          <div class="bubble" :class="{ active: store.editingId === item.id }">
             {{ item.content }}
           </div>
         </div>
@@ -23,13 +23,34 @@
 </template>
 
 <script setup lang="ts">
-import { useTimelineStore } from '../store/useTimeline';
-import { onMounted } from 'vue';
+import { computed, watch } from 'vue';
+import { useTimelineStore, type TimelineLine } from '../store/useTimeline';
+
+const props = defineProps<{
+  activeLine: TimelineLine;
+}>();
+
 const store = useTimelineStore();
 
-onMounted(() => {
-  store.fetchItems(); // 页面一打开，就去 Supabase 取回所有历史记录
+const emptyText = computed(() => {
+  if (store.lastError) {
+    return `读取${props.activeLine === 'exam' ? '考研线' : '工程线'}失败：${store.lastError}`;
+  }
+
+  if (props.activeLine === 'exam') {
+    return '考研线暂无记录。若要保存考研线数据，请先在 Supabase 创建 exam_timeline_items 表。';
+  }
+
+  return '暂无记录，请检查控制台日志或 Supabase RLS 策略';
 });
+
+watch(
+  () => props.activeLine,
+  (line) => {
+    store.fetchItems(line);
+  },
+  { immediate: true },
+);
 </script>
 
 <style scoped>
