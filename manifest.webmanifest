@@ -1,0 +1,1 @@
+{"name":"TimeLine App","short_name":"TimeLine","start_url":"/TimeLine_Vue3_ts/","display":"standalone","background_color":"#0f172a","theme_color":"#0f172a","lang":"en","scope":"/TimeLine_Vue3_ts/","icons":[{"src":"/TimeLine_Vue3_ts/pwa-icon.svg","sizes":"192x192","type":"image/svg+xml"},{"src":"/TimeLine_Vue3_ts/pwa-icon.svg","sizes":"512x512","type":"image/svg+xml"}]}
