@@ -9,15 +9,19 @@
     </template>
   </Side2Main>
   <AuthModal />
+  <InstallPrompt />
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import Side2Main from './layout/side2main.vue';
 import EditorSidebar from './components/EditorSidebar.vue';
 import TimelineDisplay from './components/TimelineDisplay.vue';
 import BlogHome from './pages/BlogHome.vue';
 import AuthModal from './components/AuthModal.vue';
+import InstallPrompt from './components/InstallPrompt.vue';
+import { usePWAInstall } from './composables/usePWAInstall';
+import { useAuthStore } from './store/useAuth';
 
 type AppRoute = 'engineering' | 'exam' | 'blog';
 
@@ -35,9 +39,23 @@ const syncRoute = () => {
   currentRoute.value = resolveRoute();
 };
 
+const authStore = useAuthStore();
+const { listen } = usePWAInstall();
+
 onMounted(() => {
   syncRoute();
   window.addEventListener('hashchange', syncRoute);
+
+  const unwatch = watch(
+    () => authStore.showLoginModal,
+    (showing) => {
+      if (!showing) {
+        listen();
+        unwatch();
+      }
+    },
+    { immediate: true }
+  );
 });
 
 onBeforeUnmount(() => {

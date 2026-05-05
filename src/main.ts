@@ -14,9 +14,26 @@ app.use(createPinia());
 
 const authStore = useAuthStore();
 
+const registerSW = () => {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker
+        .register('/TimeLine_Vue3_ts/sw.js', { scope: '/TimeLine_Vue3_ts/' })
+        .then((registration) => {
+          console.log('SW registered:', registration.scope);
+        })
+        .catch((err) => {
+          console.error('SW registration failed:', err);
+        });
+    });
+  }
+};
+
 const mountApp = async () => {
   await authStore.initAuth();
   app.mount('#app');
+
+  registerSW();
 
   setTimeout(() => {
     const appDiv = document.getElementById('app');
