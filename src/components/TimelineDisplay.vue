@@ -54,16 +54,152 @@ watch(
 </script>
 
 <style scoped>
-.main-display { flex: 1; padding: 40px; background: #f4f7f9; height: 100%; overflow-y: auto; }
-.section-node { margin: 20px 0 20px 45px; cursor: pointer; }
-.section-label { background: #3498db; color: white; padding: 4px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-.post-node { display: flex; align-items: stretch; cursor: pointer; }
-.date-col { width: 160px; text-align: right; padding-right: 15px; color: #999; font-size: 13px; padding-top: 10px; }
-.axis-col { position: relative; width: 20px; display: flex; justify-content: center; }
-.dot { width: 8px; height: 8px; border: 2px solid #8576b9; border-radius: 50%; background: #fff; z-index: 2; margin-top: 15px; }
-.line { position: absolute; top: 15px; bottom: -15px; width: 2px; background: #8576b9; z-index: 1; }
-.content-col { flex: 1; padding-left: 20px; padding-bottom: 25px; }
-.bubble { background: #fff; padding: 12px 18px; border-radius: 6px; display: inline-block; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: 0.2s; border: 2px solid transparent; }
-.bubble.active { border-color: #8576b9; transform: translateX(5px); }
-.status-text { text-align: center; color: #999; padding: 40px; font-size: 14px; }
+.main-display {
+  flex: 1;
+  height: 100%;
+  padding: 48px 56px;
+  overflow-y: auto;
+  background:
+    radial-gradient(circle at 92% 12%, rgba(255, 176, 132, 0.2), transparent 28%),
+    radial-gradient(circle at 16% 84%, rgba(184, 164, 237, 0.18), transparent 32%),
+    var(--clay-canvas);
+  box-sizing: border-box;
+}
+
+.section-node {
+  margin: 24px 0 24px 174px;
+  cursor: pointer;
+}
+
+.section-label {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--clay-brand-ochre);
+  color: var(--clay-ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.post-node {
+  display: grid;
+  grid-template-columns: 210px 28px minmax(0, 1fr);
+  align-items: stretch;
+  cursor: pointer;
+}
+
+.date-col {
+  padding: 15px 18px 0 0;
+  color: var(--clay-muted);
+  font-size: 14px;
+  text-align: right;
+}
+
+.axis-col {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border: 3px solid var(--clay-brand-teal);
+  border-radius: 50%;
+  background: var(--clay-canvas);
+  z-index: 2;
+  margin-top: 17px;
+}
+
+.line {
+  position: absolute;
+  top: 18px;
+  bottom: -18px;
+  width: 3px;
+  border-radius: 999px;
+  background: var(--clay-brand-teal);
+  z-index: 1;
+}
+
+.content-col {
+  min-width: 0;
+  padding-left: 28px;
+  padding-bottom: 28px;
+}
+
+.bubble {
+  display: inline-block;
+  max-width: min(960px, 100%);
+  padding: 18px 24px;
+  border: 1px solid var(--clay-hairline);
+  border-radius: var(--clay-radius-lg);
+  background: var(--clay-surface-card);
+  color: var(--clay-ink);
+  font-size: 18px;
+  line-height: 1.45;
+  box-shadow: var(--clay-shadow-soft);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.bubble.active {
+  border-color: var(--clay-primary);
+  transform: translateX(6px);
+}
+
+.item-wrapper:nth-of-type(6n + 1) .bubble {
+  background: var(--clay-surface-card);
+}
+
+.item-wrapper:nth-of-type(6n + 2) .bubble {
+  background: rgba(184, 164, 237, 0.42);
+}
+
+.item-wrapper:nth-of-type(6n + 3) .bubble {
+  background: rgba(255, 176, 132, 0.45);
+}
+
+.item-wrapper:nth-of-type(6n + 4) .bubble {
+  background: rgba(232, 185, 74, 0.38);
+}
+
+.status-text {
+  margin: 0 auto;
+  max-width: 680px;
+  padding: 32px;
+  border: 1px solid var(--clay-hairline);
+  border-radius: var(--clay-radius-xl);
+  background: var(--clay-surface-card);
+  color: var(--clay-muted);
+  text-align: center;
+  font-size: 16px;
+}
+
+@media (max-width: 900px) {
+  .main-display {
+    padding: 32px 20px;
+  }
+
+  .post-node {
+    grid-template-columns: 1fr;
+  }
+
+  .date-col {
+    text-align: left;
+    padding: 0 0 8px;
+  }
+
+  .axis-col {
+    display: none;
+  }
+
+  .content-col {
+    padding-left: 0;
+  }
+
+  .section-node {
+    margin-left: 0;
+  }
+}
 </style>
