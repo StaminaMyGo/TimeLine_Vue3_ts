@@ -13,50 +13,30 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref} from 'vue';
 import Side2Main from './layout/side2main.vue';
 import EditorSidebar from './components/EditorSidebar.vue';
 import TimelineDisplay from './components/TimelineDisplay.vue';
 import BlogHome from './pages/BlogHome.vue';
 import AuthModal from './components/AuthModal.vue';
 import InstallPrompt from './components/InstallPrompt.vue';
-import { usePWAInstall } from './composables/usePWAInstall';
-import { useAuthStore } from './store/useAuth';
+import { usePWAInstallTrigger } from './composables/usePWAInstallTrigger'
+import { resolveRoute, type AppRoute } from './router/resolveRoute';
 
-type AppRoute = 'engineering' | 'exam' | 'blog';
-
-const currentRoute = ref<AppRoute>('engineering');
+const currentRoute = ref<AppRoute>(resolveRoute());
 const currentLine = computed(() => (currentRoute.value === 'exam' ? 'exam' : 'engineering'));
 
-const resolveRoute = (): AppRoute => {
-  const route = window.location.hash.replace(/^#\/?/, '');
-  if (route === 'blog') return 'blog';
-  if (route === 'exam') return 'exam';
-  return 'engineering';
-};
 
+// 同步路由
 const syncRoute = () => {
   currentRoute.value = resolveRoute();
 };
 
-const authStore = useAuthStore();
-const { listen } = usePWAInstall();
-
 onMounted(() => {
   syncRoute();
   window.addEventListener('hashchange', syncRoute);
-
-  const unwatch = watch(
-    () => authStore.showLoginModal,
-    (showing) => {
-      if (!showing) {
-        listen();
-        unwatch();
-      }
-    },
-    { immediate: true }
-  );
-});
+  usePWAInstallTrigger()
+})
 
 onBeforeUnmount(() => {
   window.removeEventListener('hashchange', syncRoute);

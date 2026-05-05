@@ -1,46 +1,35 @@
-import { createApp } from 'vue';
-import { createPinia } from 'pinia';
-import App from './App.vue';
-import './styles/design.css';
-import { useAuthStore } from './store/useAuth';
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import App from './App.vue'
+import './styles/design.css'
+import { useAuthStore } from './store/useAuth'
 
-const app = createApp(App);
+// ✅ PWA 注册（由插件提供）
+import { registerSW } from 'virtual:pwa-register'
 
-app.config.errorHandler = (err: any) => {
-  document.getElementById('app')!.innerHTML = '<pre style="color:red">ERROR: ' + (err?.stack || err?.message || String(err)) + '</pre>';
-};
+const app = createApp(App)
+app.use(createPinia())
 
-app.use(createPinia());
+const authStore = useAuthStore()
 
-const authStore = useAuthStore();
-
-const registerSW = () => {
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker
-        .register('/TimeLine_Vue3_ts/sw.js', { scope: '/TimeLine_Vue3_ts/' })
-        .then((registration) => {
-          console.log('SW registered:', registration.scope);
-        })
-        .catch((err) => {
-          console.error('SW registration failed:', err);
-        });
-    });
+// ✅ 注册 SW（带更新控制）
+const updateSW = registerSW({
+  onNeedRefresh() {
+    console.log('New version available, refreshing...')
+    updateSW(true) // 强制刷新
+  },
+  onOfflineReady() {
+    console.log('App ready for offline use')
   }
-};
+})
 
-const mountApp = async () => {
-  await authStore.initAuth();
-  app.mount('#app');
+// ✅ 先 mount（避免 TDZ / 初始化竞态）
+app.mount('#app')
 
-  registerSW();
+// ✅ 再初始化登录状态（非阻塞）
+authStore.initAuth().catch(console.error)
 
-  setTimeout(() => {
-    const appDiv = document.getElementById('app');
-    if (appDiv && appDiv.children.length === 0) {
-      appDiv.innerHTML = '<div style="padding:20px;color:red">DEBUG: App mounted but no content rendered. Check console for errors.</div>';
-    }
-  }, 1000);
-};
-
-void mountApp();
+// ✅ 当 SW 更新时强制刷新（避免版本错配）
+navigator.serviceWorker?.addEventListener('controllerchange', () => {
+  window.location.reload()
+})
